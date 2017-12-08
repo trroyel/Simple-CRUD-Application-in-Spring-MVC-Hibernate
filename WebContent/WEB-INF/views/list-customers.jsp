@@ -1,16 +1,39 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!DOCTYPE html>
-
 <html>
 
 <head>
 <title>List Customers</title>
 
 <!-- reference our style sheet -->
-
 <link type="text/css" rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css" />
+
+<style type="text/css">
+td, th {
+	text-align: left;
+	padding-left: 10px;
+}
+
+a {
+	text-decoration: none;
+}
+
+.button-upd {
+	background: green;
+	color: #fff;
+	border-radius: 3px;
+	padding: 4px 6px;
+}
+
+.button-del {
+	background: red;
+	color: #fff;
+	border-radius: 3px;
+	padding: 4px 6px;
+}
+</style>
 
 </head>
 
@@ -39,7 +62,8 @@
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Email</th>
-					<th>Action</th>
+					<th>Update</th>
+					<th>Delete</th>
 				</tr>
 
 				<!-- loop over and print our customers -->
@@ -59,14 +83,9 @@
 						<td>${tempCustomer.firstName}</td>
 						<td>${tempCustomer.lastName}</td>
 						<td>${tempCustomer.email}</td>
-
-						<td>
-							<!-- display  update and  delete link --> 
-							<a href="${updatelink}">Update</a>
-							| 
-							<a href="${deletelink}" 
-							  onclick="if(!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a>
-							
+						<td><a class="button-upd" href="${updatelink}">Update</a></td>
+						<td><a class="button-del" href="${deletelink}"
+							onclick="if(!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a>
 						</td>
 					</tr>
 

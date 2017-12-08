@@ -2,10 +2,16 @@ package com.royel.springdemo.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +27,12 @@ public class CustomerController {
 	// inject CustomerService into this controller
 	@Autowired
 	private CustomerService customerService;
+
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder) {
+		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+		dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+	}
 
 	@GetMapping("/list")
 	public String listCustomer(Model model) {
@@ -39,15 +51,20 @@ public class CustomerController {
 
 		Customer customer = new Customer();
 		model.addAttribute("customer", customer);
+
 		return "add-customer-form";
 	}
 
 	@PostMapping("/saveCustomer")
-	public String saveCustomer(@ModelAttribute("customer") Customer customer) {
+	public String saveCustomer(@Valid @ModelAttribute("customer") Customer customer, BindingResult result) {
 
-		customerService.saveCustomer(customer);
+		if (result.hasErrors()) {
+			return "add-customer-form";
 
-		return "redirect:/customer/list";
+		} else {
+			customerService.saveCustomer(customer);
+			return "redirect:/customer/list";
+		}
 	}
 
 	@GetMapping("/update")
@@ -59,12 +76,12 @@ public class CustomerController {
 
 		return "add-customer-form";
 	}
-	
+
 	@GetMapping("/delete")
 	public String customerDelete(@RequestParam("customerId") int id) {
-		
+
 		customerService.deleteCustomer(id);
-		
+
 		return "redirect:/customer/list";
 	}
 
